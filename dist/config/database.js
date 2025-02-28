@@ -18,7 +18,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/task-manager';
+        const mongoURI = 'mongodb+srv://pablo:2004@cluster0.kp2f6.mongodb.net/task-manager';
         yield mongoose_1.default.connect(mongoURI);
         console.log('MongoDB conectado');
     }

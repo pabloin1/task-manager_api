@@ -7,8 +7,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const config = {
-    PORT: process.env.PORT || 5000,
-    JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
-    JWT_EXPIRATION: process.env.JWT_EXPIRATION || '1d'
+    PORT: 5000,
+    JWT_SECRET: 'your-secret-key',
+    JWT_EXPIRATION: '1d'
 };
 exports.default = config;
