@@ -1,0 +1,43 @@
+# Ignore built files
+/dist
+/node_modules
+
+# Ignore logs
+/logs
+npm-debug.log
+
+# Ignore local environment variables
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# Ignore OSX files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Ignore editor files
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+
+# Ignore temporary files
+*.log
+*.tmp
+*.temp
+
+# Ignore npm and bower folders
+npm-debug.log
+bower_components
+node_modules/
+
+# Ignore cache
+ npm-cache
+ bower_components
