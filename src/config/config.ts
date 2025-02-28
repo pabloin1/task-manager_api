@@ -10,9 +10,9 @@ interface Config {
 }
 
 const config: Config = {
-  PORT: process.env.PORT || 5000,
-  JWT_SECRET: process.env.JWT_SECRET || 'your-secret-key',
-  JWT_EXPIRATION: process.env.JWT_EXPIRATION || '1d'
+  PORT:  5000,
+  JWT_SECRET:  'your-secret-key',
+  JWT_EXPIRATION: '1d'
 };
 
 export default config;
