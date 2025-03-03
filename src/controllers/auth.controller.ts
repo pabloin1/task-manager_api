@@ -15,10 +15,13 @@ export class AuthController {
       const userData: IUser = req.body;
       const result = await this.authService.register(userData);
       
-      res.status(201).json({
-        success: true,
-        data: result
-      });
+      // Formato simplificado: Combinar user y token en un solo objeto
+      const response = {
+        ...result.user,
+        token: result.token
+      };
+      
+      res.status(201).json(response);
     } catch (error: any) {
       res.status(400).json({
         success: false,
@@ -32,10 +35,13 @@ export class AuthController {
       const { email, password } = req.body;
       const result = await this.authService.login(email, password);
       
-      res.status(200).json({
-        success: true,
-        data: result
-      });
+      // Formato simplificado: Combinar user y token en un solo objeto
+      const response = {
+        ...result.user,
+        token: result.token
+      };
+      
+      res.status(200).json(response);
     } catch (error: any) {
       res.status(401).json({
         success: false,

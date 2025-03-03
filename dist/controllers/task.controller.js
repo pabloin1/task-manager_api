@@ -8,19 +8,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskController = void 0;
 const task_service_1 = require("../services/task.service");
+const mongoose_1 = __importDefault(require("mongoose"));
 class TaskController {
     constructor() {
         this.createTask = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const taskData = Object.assign(Object.assign({}, req.body), { userId: req.user.id });
                 const task = yield this.taskService.createTask(taskData);
-                res.status(201).json({
-                    success: true,
-                    data: task
-                });
+                // Respuesta simplificada: directamente el objeto de tarea
+                res.status(201).json(task);
             }
             catch (error) {
                 res.status(400).json({
@@ -32,11 +34,8 @@ class TaskController {
         this.getAllTasks = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
                 const tasks = yield this.taskService.getTasks(req.user.id);
-                res.status(200).json({
-                    success: true,
-                    count: tasks.length,
-                    data: tasks
-                });
+                // Respuesta simplificada: directamente el array de tareas
+                res.status(200).json(tasks);
             }
             catch (error) {
                 res.status(500).json({
@@ -47,7 +46,16 @@ class TaskController {
         });
         this.getTaskById = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
-                const task = yield this.taskService.getTaskById(req.params.id);
+                const { id } = req.params;
+                // Validar que el ID sea un ObjectId válido
+                if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'ID de tarea inválido'
+                    });
+                    return;
+                }
+                const task = yield this.taskService.getTaskById(id);
                 if (!task) {
                     res.status(404).json({
                         success: false,
@@ -56,17 +64,15 @@ class TaskController {
                     return;
                 }
                 // Verificar que la tarea pertenezca al usuario
-                if (task.userId.toString() !== req.user.id) {
+                if (task.userId !== req.user.id) {
                     res.status(403).json({
                         success: false,
                         message: 'No autorizado para acceder a esta tarea'
                     });
                     return;
                 }
-                res.status(200).json({
-                    success: true,
-                    data: task
-                });
+                // Respuesta simplificada: directamente el objeto de tarea
+                res.status(200).json(task);
             }
             catch (error) {
                 res.status(500).json({
@@ -77,8 +83,17 @@ class TaskController {
         });
         this.updateTask = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const { id } = req.params;
+                // Validar que el ID sea un ObjectId válido
+                if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'ID de tarea inválido'
+                    });
+                    return;
+                }
                 // Primero verificar que la tarea exista y pertenezca al usuario
-                const existingTask = yield this.taskService.getTaskById(req.params.id);
+                const existingTask = yield this.taskService.getTaskById(id);
                 if (!existingTask) {
                     res.status(404).json({
                         success: false,
@@ -86,18 +101,16 @@ class TaskController {
                     });
                     return;
                 }
-                if (existingTask.userId.toString() !== req.user.id) {
+                if (existingTask.userId !== req.user.id) {
                     res.status(403).json({
                         success: false,
                         message: 'No autorizado para modificar esta tarea'
                     });
                     return;
                 }
-                const task = yield this.taskService.updateTask(req.params.id, req.body);
-                res.status(200).json({
-                    success: true,
-                    data: task
-                });
+                const task = yield this.taskService.updateTask(id, req.body);
+                // Respuesta simplificada: directamente el objeto de tarea actualizado
+                res.status(200).json(task);
             }
             catch (error) {
                 res.status(500).json({
@@ -108,8 +121,17 @@ class TaskController {
         });
         this.completeTask = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const { id } = req.params;
+                // Validar que el ID sea un ObjectId válido
+                if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'ID de tarea inválido'
+                    });
+                    return;
+                }
                 // Verificar que la tarea exista y pertenezca al usuario
-                const existingTask = yield this.taskService.getTaskById(req.params.id);
+                const existingTask = yield this.taskService.getTaskById(id);
                 if (!existingTask) {
                     res.status(404).json({
                         success: false,
@@ -117,18 +139,16 @@ class TaskController {
                     });
                     return;
                 }
-                if (existingTask.userId.toString() !== req.user.id) {
+                if (existingTask.userId !== req.user.id) {
                     res.status(403).json({
                         success: false,
                         message: 'No autorizado para modificar esta tarea'
                     });
                     return;
                 }
-                const task = yield this.taskService.completeTask(req.params.id);
-                res.status(200).json({
-                    success: true,
-                    data: task
-                });
+                const task = yield this.taskService.completeTask(id);
+                // Respuesta simplificada: directamente el objeto de tarea actualizado
+                res.status(200).json(task);
             }
             catch (error) {
                 res.status(500).json({
@@ -139,8 +159,17 @@ class TaskController {
         });
         this.deleteTask = (req, res) => __awaiter(this, void 0, void 0, function* () {
             try {
+                const { id } = req.params;
+                // Validar que el ID sea un ObjectId válido
+                if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
+                    res.status(400).json({
+                        success: false,
+                        message: 'ID de tarea inválido'
+                    });
+                    return;
+                }
                 // Verificar que la tarea exista y pertenezca al usuario
-                const existingTask = yield this.taskService.getTaskById(req.params.id);
+                const existingTask = yield this.taskService.getTaskById(id);
                 if (!existingTask) {
                     res.status(404).json({
                         success: false,
@@ -148,18 +177,16 @@ class TaskController {
                     });
                     return;
                 }
-                if (existingTask.userId.toString() !== req.user.id) {
+                if (existingTask.userId !== req.user.id) {
                     res.status(403).json({
                         success: false,
                         message: 'No autorizado para eliminar esta tarea'
                     });
                     return;
                 }
-                yield this.taskService.deleteTask(req.params.id);
-                res.status(200).json({
-                    success: true,
-                    data: {}
-                });
+                yield this.taskService.deleteTask(id);
+                // Para eliminar, mantenemos una respuesta vacía con status 204
+                res.status(204).end();
             }
             catch (error) {
                 res.status(500).json({

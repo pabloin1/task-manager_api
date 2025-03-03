@@ -17,10 +17,9 @@ class AuthController {
             try {
                 const userData = req.body;
                 const result = yield this.authService.register(userData);
-                res.status(201).json({
-                    success: true,
-                    data: result
-                });
+                // Formato simplificado: Combinar user y token en un solo objeto
+                const response = Object.assign(Object.assign({}, result.user), { token: result.token });
+                res.status(201).json(response);
             }
             catch (error) {
                 res.status(400).json({
@@ -33,10 +32,9 @@ class AuthController {
             try {
                 const { email, password } = req.body;
                 const result = yield this.authService.login(email, password);
-                res.status(200).json({
-                    success: true,
-                    data: result
-                });
+                // Formato simplificado: Combinar user y token en un solo objeto
+                const response = Object.assign(Object.assign({}, result.user), { token: result.token });
+                res.status(200).json(response);
             }
             catch (error) {
                 res.status(401).json({

@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 import { TaskService } from '../services/task.service';
 import { ITask } from '../types/task';
+import mongoose from 'mongoose';
 
 export class TaskController {
   private taskService: TaskService;
@@ -19,10 +20,8 @@ export class TaskController {
       
       const task = await this.taskService.createTask(taskData);
       
-      res.status(201).json({
-        success: true,
-        data: task
-      });
+      // Respuesta simplificada: directamente el objeto de tarea
+      res.status(201).json(task);
     } catch (error: any) {
       res.status(400).json({
         success: false,
@@ -35,11 +34,8 @@ export class TaskController {
     try {
       const tasks = await this.taskService.getTasks(req.user.id);
       
-      res.status(200).json({
-        success: true,
-        count: tasks.length,
-        data: tasks
-      });
+      // Respuesta simplificada: directamente el array de tareas
+      res.status(200).json(tasks);
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -50,7 +46,18 @@ export class TaskController {
 
   getTaskById = async (req: Request, res: Response): Promise<void> => {
     try {
-      const task = await this.taskService.getTaskById(req.params.id);
+      const { id } = req.params;
+      
+      // Validar que el ID sea un ObjectId válido
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de tarea inválido'
+        });
+        return;
+      }
+      
+      const task = await this.taskService.getTaskById(id);
       
       if (!task) {
         res.status(404).json({
@@ -61,7 +68,7 @@ export class TaskController {
       }
       
       // Verificar que la tarea pertenezca al usuario
-      if (task.userId.toString() !== req.user.id) {
+      if (task.userId !== req.user.id) {
         res.status(403).json({
           success: false,
           message: 'No autorizado para acceder a esta tarea'
@@ -69,10 +76,8 @@ export class TaskController {
         return;
       }
       
-      res.status(200).json({
-        success: true,
-        data: task
-      });
+      // Respuesta simplificada: directamente el objeto de tarea
+      res.status(200).json(task);
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -83,8 +88,19 @@ export class TaskController {
 
   updateTask = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { id } = req.params;
+      
+      // Validar que el ID sea un ObjectId válido
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de tarea inválido'
+        });
+        return;
+      }
+      
       // Primero verificar que la tarea exista y pertenezca al usuario
-      const existingTask = await this.taskService.getTaskById(req.params.id);
+      const existingTask = await this.taskService.getTaskById(id);
       
       if (!existingTask) {
         res.status(404).json({
@@ -94,7 +110,7 @@ export class TaskController {
         return;
       }
       
-      if (existingTask.userId.toString() !== req.user.id) {
+      if (existingTask.userId !== req.user.id) {
         res.status(403).json({
           success: false,
           message: 'No autorizado para modificar esta tarea'
@@ -102,12 +118,10 @@ export class TaskController {
         return;
       }
       
-      const task = await this.taskService.updateTask(req.params.id, req.body);
+      const task = await this.taskService.updateTask(id, req.body);
       
-      res.status(200).json({
-        success: true,
-        data: task
-      });
+      // Respuesta simplificada: directamente el objeto de tarea actualizado
+      res.status(200).json(task);
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -118,8 +132,19 @@ export class TaskController {
 
   completeTask = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { id } = req.params;
+      
+      // Validar que el ID sea un ObjectId válido
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de tarea inválido'
+        });
+        return;
+      }
+      
       // Verificar que la tarea exista y pertenezca al usuario
-      const existingTask = await this.taskService.getTaskById(req.params.id);
+      const existingTask = await this.taskService.getTaskById(id);
       
       if (!existingTask) {
         res.status(404).json({
@@ -129,7 +154,7 @@ export class TaskController {
         return;
       }
       
-      if (existingTask.userId.toString() !== req.user.id) {
+      if (existingTask.userId !== req.user.id) {
         res.status(403).json({
           success: false,
           message: 'No autorizado para modificar esta tarea'
@@ -137,12 +162,10 @@ export class TaskController {
         return;
       }
       
-      const task = await this.taskService.completeTask(req.params.id);
+      const task = await this.taskService.completeTask(id);
       
-      res.status(200).json({
-        success: true,
-        data: task
-      });
+      // Respuesta simplificada: directamente el objeto de tarea actualizado
+      res.status(200).json(task);
     } catch (error: any) {
       res.status(500).json({
         success: false,
@@ -153,8 +176,19 @@ export class TaskController {
 
   deleteTask = async (req: Request, res: Response): Promise<void> => {
     try {
+      const { id } = req.params;
+      
+      // Validar que el ID sea un ObjectId válido
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        res.status(400).json({
+          success: false,
+          message: 'ID de tarea inválido'
+        });
+        return;
+      }
+      
       // Verificar que la tarea exista y pertenezca al usuario
-      const existingTask = await this.taskService.getTaskById(req.params.id);
+      const existingTask = await this.taskService.getTaskById(id);
       
       if (!existingTask) {
         res.status(404).json({
@@ -164,7 +198,7 @@ export class TaskController {
         return;
       }
       
-      if (existingTask.userId.toString() !== req.user.id) {
+      if (existingTask.userId !== req.user.id) {
         res.status(403).json({
           success: false,
           message: 'No autorizado para eliminar esta tarea'
@@ -172,12 +206,10 @@ export class TaskController {
         return;
       }
       
-      await this.taskService.deleteTask(req.params.id);
+      await this.taskService.deleteTask(id);
       
-      res.status(200).json({
-        success: true,
-        data: {}
-      });
+      // Para eliminar, mantenemos una respuesta vacía con status 204
+      res.status(204).end();
     } catch (error: any) {
       res.status(500).json({
         success: false,
